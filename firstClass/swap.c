@@ -8,6 +8,15 @@ typedef struct {
     char lastName[40];
 
 } Person;
+
+struct Person1{
+    char a[10];
+};
+
+void testPerson1(struct Person1* a) {
+    struct Person1 temp = *a;
+    printf("Person1 %s",temp.a);
+}
 // not only restricted datatype, but also your own datatype
 // there are duplicates for swap, how to make it generics
 void swapPersons(Person* first, Person* second) {

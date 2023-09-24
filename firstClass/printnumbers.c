@@ -4,7 +4,7 @@
 
 // function pointer
 // there is a function called visitor who is input is an int, and return int
-void transformElements(int* x, size_t count, int (*visitor)(int)) {
+void transformElements(int *x, size_t count, int (*visitor)(int)) {
     int index;
     for (index = 0; index < count; index++) {
         x[index] = visitor(x[index]);
@@ -12,28 +12,29 @@ void transformElements(int* x, size_t count, int (*visitor)(int)) {
 }
 
 int square(int x) {
-    return x*x;
+    return x * x;
 }
 
 int cube(int x) {
-    return x*x*x;
+    return x * x * x;
 }
 
 // same code
-void cubeAllElements(int* x, size_t count) {
+void cubeAllElements(int *x, size_t count) {
     int index;
     for (index = 0; index < count; index++) {
         x[index] = x[index] * x[index] * x[index];
     }
 }
 
-void squareAllElements(int* x, size_t count) {
+void squareAllElements(int *x, size_t count) {
     int index;
 
     for (index = 0; index < count; index++) {
         x[index] = x[index] * x[index];
     }
 }
+
 // arg[0] is the "./printnum"
 // arg[1] is the number you input
 // argv[] is the array of strings
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]) {
     // how many things to print
     int size;
     // array
-    int* numbers;
+    int *numbers;
     // check if the number of the command line is correct
     // argv[1]=="--help" is wrong, using the.equals function for a string compare
     if (argc != 2 || strcmp(argv[1], "--help") == 0) {

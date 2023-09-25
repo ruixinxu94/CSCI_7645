@@ -11,3 +11,4 @@ compile: swap2.o main.o
 
 clean:
 	rm myapp *.o
+

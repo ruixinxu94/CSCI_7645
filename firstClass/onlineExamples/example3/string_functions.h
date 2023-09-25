@@ -7,3 +7,7 @@
 void stringToUpper(char* input);
 
 void stringToLower(char* output);
+
+void stringModify(char* input, char (*visit)(char));
+char* lower(char* str);
+char* upper(char* str);

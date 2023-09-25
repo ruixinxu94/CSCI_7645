@@ -5,20 +5,34 @@
 #include <ctype.h> /* For tolower and toupper */
 #include "string_functions.h"
 
-void stringToUpper(char* input)
-{
+void stringToUpper(char *input) {
     int index;
 
-    for (index = 0; input[index] != '\0'; input++){
+    for (index = 0; input[index] != '\0'; input++) {
         input[index] = toupper(input[index]);
     }
 }
 
-void stringToLower(char* input)
-{
+void stringToLower(char *input) {
     int index;
 
-    for(index = 0; input[index] != '\0'; input++){
+    for (index = 0; input[index] != '\0'; input++) {
         input[index] = tolower(input[index]);
+    }
+}
+
+char* lower(char* str) {
+    return tolower(str);
+}
+
+char* upper(char* str) {
+    return toupper(str);
+}
+
+void stringModify(char* input, char (*visit)(char)) {
+    int index;
+
+    for (index = 0; input[index] != '\0'; input++) {
+        input[index] = visit(input[index]);
     }
 }

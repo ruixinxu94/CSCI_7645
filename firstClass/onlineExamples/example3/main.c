@@ -19,12 +19,18 @@
 //        visit(arrayOfStrings[index]);
 //    }
 //}
+char mylower(char c) {
+    return(char)tolower((int)c);
+}
 
+char myupper(char c) {
+    return(char)toupper((int)c);
+}
 void visitStrings(
         char **arrayOfStrings, /* A char* is a string (array of char), a char** is an array of strings */
         size_t countOfStrings, /* Number of strings */
         void (*visit)(char *input, char (*nestedVisit)(char)), /* The visitor for each string */
-        char *(*nestedVisit)(char *) /* The visitor for each character */) {
+        char (*nestedVisit)(char) /* The visitor for each character */) {
     int index;
 
     for (index = 0; index < countOfStrings; index++) {
@@ -51,12 +57,12 @@ int main(int argc, char **argv) {
     }
 
 //    visitStrings(arrayOfStrings, countOfStrings, stringToUpper);
-    visitStrings(arrayOfStrings, countOfStrings, stringModify, lower);
+    visitStrings(arrayOfStrings, countOfStrings, stringModify, mylower);
     for (index = 0; index < countOfStrings; index++) {
         printf("To upper: %s\n", arrayOfStrings[index]);
     }
 
-    visitStrings(arrayOfStrings, countOfStrings, stringModify, upper);
+    visitStrings(arrayOfStrings, countOfStrings, stringModify, myupper);
     for (index = 0; index < countOfStrings; index++) {
         printf("To lower: %s\n", arrayOfStrings[index]);
     }

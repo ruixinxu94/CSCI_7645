@@ -21,14 +21,6 @@ void stringToLower(char *input) {
     }
 }
 
-char* lower(char* str) {
-    return tolower(str);
-}
-
-char* upper(char* str) {
-    return toupper(str);
-}
-
 void stringModify(char* input, char (*visit)(char)) {
     int index;
 

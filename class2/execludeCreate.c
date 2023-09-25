@@ -4,9 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-/*
- * chapter 4 or 5
- */
+
 /*
  * copy the contents of a source file to a destination file
  * Compile as:
@@ -17,17 +15,6 @@
  * ./cpy --help
  * OR
  * ./cpy --h
- */
-
-/*
- * 'ln' file linking
- * ln textoutput.txt myFolder/textoutput.txt
- * this is called hard link, when the reference become 0, the created file gone
- *
- * symbolic link
- * ln -s textoutput.txt myFolder/
- *
-
  */
 
 
@@ -71,17 +58,8 @@ int main(int argc, char **argv) {
         S_IRGRP: Read permission for the group.
         S_IROTH: Read permission for others.
      */
-     /**
-      * rw- r-- r--
-      * 110  100  100
-      * 6   4     4
-      * and the command is chmod 644
-      * 111 111 101
-      * 7 7 5
-      *
-      */
     destinationFd = open(argv[2],
-                         O_CREAT | O_WRONLY,
+                         O_CREAT | O_WRONLY | O_EXCL,
                          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
     if (destinationFd == -1) {
@@ -104,23 +82,23 @@ T         he actual number of bytes read is stored in numRead. This number can b
          for various reasons,
          such as reaching the end of the file.
          */
-         numWritten = write(destinationFd, buffer, numRead); //  should only write the byte,
-         // not the chunck size
-         /**
-          * check fo partial write error
-          */
-          if (numWritten < numRead) {
-              printf("Partial write error .\n");
-              exit(EXIT_FAILURE);
-          }
-          numRead = read(sourceFd, buffer, CHUNK_SIZE);
-          /**
-           * check for failed read
-           */
-           if (numRead == -1) {
-               printf("Read error .\n");
-               exit(EXIT_FAILURE);
-           }
+        numWritten = write(destinationFd, buffer, numRead); //  should only write the byte,
+        // not the chunck size
+        /**
+         * check fo partial write error
+         */
+        if (numWritten < numRead) {
+            printf("Partial write error .\n");
+            exit(EXIT_FAILURE);
+        }
+        numRead = read(sourceFd, buffer, CHUNK_SIZE);
+        /**
+         * check for failed read
+         */
+        if (numRead == -1) {
+            printf("Read error .\n");
+            exit(EXIT_FAILURE);
+        }
     }
 
     int status = close(sourceFd);

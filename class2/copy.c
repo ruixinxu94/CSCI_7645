@@ -39,7 +39,6 @@ int main(int argc, char **argv) {
     int numRead, numWritten;
 
 
-
     if (argc != 3 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
         printf("-usage...");
         exit(EXIT_FAILURE);

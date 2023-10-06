@@ -22,8 +22,7 @@ int main(int argc, char **argv) {
             exit(1);
 
         case 0: /* Child process*/
-            printf(
-                    "Child process %d is about to run \"cc --version\"\n",
+            printf("Child process %d is about to run \"cc --version\"\n",
                     getpid());
             char *const arguments[] = {"cc", "--version",
                                        NULL}; /* The last element of this string array must be NULL */

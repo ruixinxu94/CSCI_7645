@@ -8,7 +8,7 @@ int main() {
     int status;
     pid_t p = getpid();  // Get the parent process ID
     int child_id = 0;
-    int child_pids[3];
+//    int child_pids[3];
 
     for (int i = 0; i < 3; ++i) {
         pid_t child_pid = fork();
@@ -36,7 +36,7 @@ int main() {
             }
         } else if (child_pid > 0) {  // Parent process
             char child_label = 'x' + i;
-            child_pids[i] = child_pid;
+            waitpid(child_pid, &status, 0);
             printf("Parent process %d created child process %c\n", p, child_label);
         } else {
             perror("fork");
@@ -44,15 +44,15 @@ int main() {
         }
     }
 
-    for (int i = 0; i < 3; ++i) {
-//        wait(&status);
-        waitpid(child_pids[i], &status, 0);
-//        if (WIFEXITED(status)) {
-//            printf("Child process exited with status: %d\n", WEXITSTATUS(status));
-//        } else {
-//            printf("Child process did not exit normally\n");
-//        }
-        printf("Child process exited with status: %d\n", WEXITSTATUS(status));
-    }
+//    for (int i = 0; i < 3; ++i) {
+////        wait(&status);
+//        waitpid(child_pids[i], &status, 0);
+////        if (WIFEXITED(status)) {
+////            printf("Child process exited with status: %d\n", WEXITSTATUS(status));
+////        } else {
+////            printf("Child process did not exit normally\n");
+////        }
+//        printf("Child process exited with status: %d\n", WEXITSTATUS(status));
+//    }
     exit(EXIT_SUCCESS);
 }

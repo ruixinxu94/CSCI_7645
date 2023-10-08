@@ -83,6 +83,13 @@ int main(int argc, char **argv) {
                          O_CREAT | O_WRONLY,
                          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
+    /*
+     * append something other than override
+     */
+//    destinationFd = open(argv[2],
+//                         O_CREAT | O_WRONLY | O_APPEND,
+//                         S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+
     if (destinationFd == -1) {
         printf("%s :no such file, the openning failed\n", argv[2]);
         exit(EXIT_FAILURE);

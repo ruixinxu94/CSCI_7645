@@ -21,6 +21,9 @@ void* threadFunction(void* input) {
 
 
 int main(int argc, char** argv) {
+    if (argv[1] == " -h" || argv[1] == "--help" || argc != 2) {
+        printf("<usage>");
+    }
     pthread_t thread1, thread2;
     int status;
     int input1, input2;

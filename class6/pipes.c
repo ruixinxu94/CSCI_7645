@@ -41,21 +41,21 @@ int main(int argc, char **argv) {
                 _exit(EXIT_FAILURE);
             }
 
-//            int numRead = read(pipeDescriptor[0], &values, sizeof(int));
-//            while (numRead > 0) {
-//                printf("child read %d\n", values[0]);
-//                numRead = read(pipeDescriptor[0], &values, sizeof(int));
-//            }
-            int numRead = read(pipeDescriptor[0], readValues, sizeof(int));
+            int numRead = read(pipeDescriptor[0], &value, sizeof(int));
             while (numRead > 0) {
-                // how many integres did i actually read?
-                int numValues = numRead / sizeof(int);
-                for (int i = 0; i < numValues; i++) {
-                    value = readValues[i];
-                    printf("child read %d\n", value);
-                }
-                numRead = read(pipeDescriptor[0], readValues, sizeof(int));
+                printf("child read %d\n", value);
+                numRead = read(pipeDescriptor[0], &value, sizeof(int));
             }
+//            int numRead = read(pipeDescriptor[0], readValues, sizeof(int));
+//            while (numRead > 0) {
+//                // how many integres did i actually read?
+//                int numValues = numRead / sizeof(int);
+//                for (int i = 0; i < numValues; i++) {
+//                    value = readValues[i];
+//                    printf("child read %d\n", value);
+//                }
+//                numRead = read(pipeDescriptor[0], readValues, sizeof(int));
+//            }
             if (numRead == -1) {
                 printf("child failed to read from the pipe\n");
                 _exit(EXIT_FAILURE);
@@ -81,19 +81,19 @@ int main(int argc, char **argv) {
              * write all the values at one time
              * if the reader doesn't know the size, we should parse with fixed size
              */
-            int numWritten = write(pipeDescriptor[1], &values, sizeof(values));
-            if (numWritten != sizeof(values)) {
-                printf("partial write happens");
-                exit(EXIT_FAILURE);
-            }
-
-//            for (int i = 0; i < 4; i++) {
-//                int numWritten = write(pipeDescriptor[1], &values[i], sizeof(int));
-//                if (numWritten != sizeof(int)) {
-//                    printf("partial write happens");
-//                    exit(EXIT_FAILURE);
-//                }
+//            int numWritten = write(pipeDescriptor[1], &values, sizeof(values));
+//            if (numWritten != sizeof(values)) {
+//                printf("partial write happens");
+//                exit(EXIT_FAILURE);
 //            }
+
+            for (int i = 0; i < 4; i++) {
+                int numWritten = write(pipeDescriptor[1], &values[i], sizeof(int));
+                if (numWritten != sizeof(int)) {
+                    printf("partial write happens");
+                    exit(EXIT_FAILURE);
+                }
+            }
 
             status = close(pipeDescriptor[1]);
             if (status == -1) {

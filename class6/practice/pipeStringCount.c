@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
             char string[1000];
             int numRead = read(pipeDescriptor[0], &readChar, sizeof(char));
             int index = 0;
+
             while (numRead > 0) {
                 if (readChar == '\0') {
                     break;

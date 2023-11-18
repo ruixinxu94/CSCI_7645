@@ -36,7 +36,7 @@ void removeFIFO() {
     int status = unlink(SERVER_FIFO_NAME);
     if (status == -1) {
         printf("server failed to remove request FIFO.\n");
-        exit(EXIT_FAILURE);
+//        exit(EXIT_FAILURE); shouldn't call it again since it would trigger infnite handler
     }
 }
 

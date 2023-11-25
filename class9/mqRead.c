@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
                 "Name = %s, count = %d, priority = %u.\n",
                 person.name,
                 person.count,
+                person.count,
                 priority
         );
 

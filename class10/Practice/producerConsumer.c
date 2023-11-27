@@ -8,10 +8,10 @@
 #include <sys/wait.h>
 
 #define MAX_MESSAGES 1024
-#define SHM_NAME "/mySharedMemory"
-#define MUTEX_NAME "/my_mutex_semaphore"
-#define EMPTY_NAME "/my_empty_semaphore"
-#define FULL_NAME "/my_full_semaphore"
+#define SHM_NAME "/mySharedMemor"
+#define MUTEX_NAME "/my_mutex_semaphor"
+#define EMPTY_NAME "/my_empty_semaphor"
+#define FULL_NAME "/my_full_semaphor"
 
 sem_t *mutex, *empty, *full;
 int *numMessages;
@@ -29,7 +29,7 @@ void producer() {
 
         if (*numMessages < MAX_MESSAGES) {
             (*numMessages)++;
-            printf("producer increased by 1: %d", *numMessages);
+            printf("producer increased by 1: %d\n", *numMessages);
         }
 
         if (sem_post(mutex) != 0) {

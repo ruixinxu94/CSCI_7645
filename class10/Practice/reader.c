@@ -16,8 +16,11 @@ typedef struct {
 
 int main(int argc, char *argv[]) {
     int shmDescriptor;
+    int status;
+    void *addr;
     sem_t *mySemaphore;
-    Person *sharedPeople;
+    struct stat shmMetadata;
+    int *pointerToSharedVariable;
 
     mySemaphore = sem_open("/MySemaphore", 0);
     if (mySemaphore == SEM_FAILED) {
@@ -31,37 +34,47 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    sharedPeople = (Person *) mmap(NULL, sizeof(Person) * PERSON_COUNT, PROT_READ, MAP_SHARED, shmDescriptor, 0);
-    if (sharedPeople == MAP_FAILED) {
+    status = fstat(shmDescriptor, &shmMetadata);
+    if (status == -1) {
+        printf("Failed to get size of the shared memory.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    addr = (Person *) mmap(NULL, shmMetadata.st_size,
+                           PROT_READ, MAP_SHARED, shmDescriptor, 0);
+    if (addr == MAP_FAILED) {
         printf("Failed to map shared memory.\n");
         exit(EXIT_FAILURE);
     }
 
-    if (sem_wait(mySemaphore) != 0) {
+    status = close(shmDescriptor);
+    if (status == -1) {
+        printf("Failed to close shared memory.\n");
+        exit(EXIT_FAILURE);
+
+    }
+    pointerToSharedVariable = (int *) addr;
+    status = sem_wait(mySemaphore);
+    if (status != 0) {
         printf("Failed to wait semaphore.\n");
         exit(EXIT_FAILURE);
     }
-    for (int i = 0; i < PERSON_COUNT; i++) {
-        printf("Person %d: %s %s\n", i, sharedPeople[i].firstName, sharedPeople[i].lastName);
-    }
-    if (sem_post(mySemaphore) != 0) {
+    Person *person = (Person *) pointerToSharedVariable;
+
+    status = sem_post(mySemaphore);
+    if (status != 0) {
         printf("Failed to unlock semaphore.\n");
         exit(EXIT_FAILURE);
     }
 
-    if (munmap(sharedPeople, sizeof(Person) * PERSON_COUNT) == -1) {
-        printf("Failed to unmap shared memory.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (close(shmDescriptor) == -1) {
-        printf("Failed to close shared memory descriptor.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (sem_close(mySemaphore) == -1) {
+    status = sem_close(mySemaphore);
+    if (status == -1) {
         printf("Failed to close semaphore.\n");
         exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < PERSON_COUNT; i++) {
+        printf("Person %d: %s %s\n", i, person[i].firstName, person[i].lastName);
     }
 
     exit(EXIT_SUCCESS);

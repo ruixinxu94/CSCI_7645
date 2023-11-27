@@ -5,6 +5,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include <string.h>
 
 #define NAME_SIZE 20
 #define PERSON_COUNT 10
@@ -15,14 +16,19 @@ typedef struct {
 } Person;
 
 int main(int argc, char *argv[]) {
+
+    if (argc < 2 || strcmp("--help", argv[1]) == 0 || strcmp("-h", argv[1]) == 0) {
+        printf("usage: <>...");
+        exit(EXIT_FAILURE);
+    }
+    char *mySemaphoreName = (char *) argv[1];
     int shmDescriptor;
     int status;
     void *addr;
-    sem_t *mySemaphore;
     struct stat shmMetadata;
     int *pointerToSharedVariable;
 
-    mySemaphore = sem_open("/MySemaphore", 0);
+    sem_t *mySemaphore = sem_open(mySemaphoreName, 0);
     if (mySemaphore == SEM_FAILED) {
         printf("Failed to open semaphore.\n");
         exit(EXIT_FAILURE);

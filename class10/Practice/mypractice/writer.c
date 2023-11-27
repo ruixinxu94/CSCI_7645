@@ -17,13 +17,18 @@ typedef struct {
 } Person;
 
 int main(int argc, char *argv[]) {
+    if (argc < 2 || strcmp("--help", argv[1]) == 0 || strcmp("-h", argv[1]) == 0) {
+        printf("usage: <>...");
+        exit(EXIT_FAILURE);
+    }
+    char *mySemaphoreName = (char *) argv[1];
     int shmDescriptor;
     int status;
     void *addr;
     Person *sharedPeople;
     sem_t *mySemaphore;
 
-    mySemaphore = sem_open("/MySemaphore", O_CREAT, S_IRUSR | S_IWUSR, 1);
+    mySemaphore = sem_open(argv[1], O_CREAT, S_IRUSR | S_IWUSR, 1);
     if (mySemaphore == SEM_FAILED) {
         printf("Failed to create semaphore.\n");
         exit(EXIT_FAILURE);

@@ -9,9 +9,9 @@
 
 #define MAX_MESSAGES 1024
 #define SHM_NAME "/mySharedMemor"
-#define MUTEX_NAME "/my_mutex_semaphor"
-#define EMPTY_NAME "/my_empty_semaphor"
-#define FULL_NAME "/my_full_semaphor"
+#define MUTEX_NAME "/my_mutex_semapho"
+#define EMPTY_NAME "/my_empty_semapho"
+#define FULL_NAME "/my_full_semapho"
 
 sem_t *mutex, *empty, *full;
 int *numMessages;
@@ -126,6 +126,21 @@ int main() {
     }
     if (sem_close(mutex) != 0 || sem_close(empty) != 0 || sem_close(full) != 0) {
         printf("Failed to close semaphores.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (munmap(numMessages, sizeof(int)) != 0) {
+        printf("Failed to unmap shared memory.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (shm_unlink(SHM_NAME) != 0) {
+        printf("Failed to unlink shared memory.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (sem_unlink(MUTEX_NAME) != 0 || sem_unlink(EMPTY_NAME) != 0 || sem_unlink(FULL_NAME) != 0) {
+        printf("Failed to unlink semaphores.\n");
         exit(EXIT_FAILURE);
     }
     exit(EXIT_SUCCESS);

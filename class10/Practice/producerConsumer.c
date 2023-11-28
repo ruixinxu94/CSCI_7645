@@ -9,9 +9,9 @@
 
 #define MAX_MESSAGES 1024
 #define SHM_NAME "/mySharedMemory"
-#define MUTEX_NAME "/my_mutex_semaphor"
-#define EMPTY_NAME "/my_empty_semaphor"
-#define FULL_NAME "/my_full_semaphor"
+#define MUTEX_NAME "/my_mutex_semaphore"
+#define EMPTY_NAME "/my_empty_semaphore"
+#define FULL_NAME "/my_full_semaphore"
 
 sem_t *mutex, *empty, *full;
 int *numMessages;
@@ -29,7 +29,7 @@ void producer() {
 
         if (*numMessages < MAX_MESSAGES) {
             (*numMessages)++;
-            printf("producer increased by 1: %d\n", *numMessages);
+            printf("producer increased by 1: %d", *numMessages);
         }
 
         if (sem_post(mutex) != 0) {
@@ -76,9 +76,7 @@ int main() {
     pid_t pid;
 
     // Create shared memory
-    shmDescriptor = shm_open(
-            "/mySharedMemory", O_CREAT | O_RDWR, // cannot have O_WRONLY here
-            S_IRUSR | S_IWUSR); // cannot have S_IXUSR
+    shmDescriptor = shm_open(SHM_NAME, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (shmDescriptor == -1) {
         printf("Failed to open shared memory.\n");
         exit(EXIT_FAILURE);
@@ -97,7 +95,7 @@ int main() {
 
     // Initialize semaphores
     mutex = sem_open(MUTEX_NAME, O_CREAT, S_IRUSR | S_IWUSR, 1);
-    empty = sem_open(EMPTY_NAME, O_CREAT, S_IRUSR | S_IWUSR, MAX_MESSAGES);0
+    empty = sem_open(EMPTY_NAME, O_CREAT, S_IRUSR | S_IWUSR, MAX_MESSAGES);
     full = sem_open(FULL_NAME, O_CREAT, S_IRUSR | S_IWUSR, 0);
 
     if (mutex == SEM_FAILED || empty == SEM_FAILED || full == SEM_FAILED) {

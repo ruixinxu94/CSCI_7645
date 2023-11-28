@@ -64,3 +64,12 @@ process.dSYM/Contents/Resources/DWARF/process
 readFromFIFO.dSYM/Contents/Resources/DWARF/readFromFIFO
 threeTasksSychnronizationPipes
 writeToFIFO.dSYM/Contents/Resources/DWARF/writeToFIFO
+Archive.zip
+assignment6/shmreader
+assignment6/shmwriter
+class10/Practice/producerConsumer
+class10/Practice/reader
+class10/Practice/writer
+class9/Practice/client
+class9/Practice/server
+producerConsumer

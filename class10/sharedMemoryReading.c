@@ -4,12 +4,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>        /* For mode constants */
-#include <fcntl.h>           /* For O_* constants */
-#include <sys/mman.h>        /* For mmap */
-#include <unistd.h>          /* For ftruncate and close */
-#include <sys/types.h>       /* For ftruncate */
-#include <semaphore.h>       /* For semaphores */
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <semaphore.h>
 
 int main(int argc, char *argv[]) {
     int shmDescriptor;

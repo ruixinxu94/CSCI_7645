@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 3 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
-        printf("Usage: ./shmreader <shared memory name> <semaphore name>");
+        printf("Usage: ./shmreader <shared memory name> <semaphore name>\n");
         exit(EXIT_FAILURE);
     }
 
@@ -46,13 +46,12 @@ int main(int argc, char *argv[]) {
     }
 
     sem_wait(sem);
-    int num_values = sb.st_size / sizeof(int);
+    int num_values = shared_memory[0];
     for (int i = 0; i < num_values; i++) {
-        printf("%d\n", shared_memory[i]);
+        printf("%d\n", shared_memory[i + 1]);
     }
     sem_post(sem);
 
-    // Cleanup
     munmap(shared_memory, sb.st_size);
     close(shmDescriptor);
     sem_close(sem);

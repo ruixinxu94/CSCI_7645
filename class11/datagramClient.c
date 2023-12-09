@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[]) {
     struct sockaddr_un svaddr, claddr;
-    int sfd, j;
+    int sfd, i;
     size_t msgLen;
     ssize_t numBytes;
     char resp[BUF_SIZE];
@@ -43,9 +43,9 @@ int main(int argc, char *argv[]) {
     strncpy(svaddr.sun_path, SV_SOCK_PATH, sizeof(svaddr.sun_path) - 1);
 
     // Send messages to server; echo responses on stdout
-    for (j = 1; j < argc; j++) {
-        msgLen = strlen(argv[j]); // May be longer than BUF_SIZE
-        if (sendto(sfd, argv[j], msgLen, 0, (struct sockaddr *) &svaddr,
+    for (i = 1; i < argc; i++) {
+        msgLen = strlen(argv[i]); // May be longer than BUF_SIZE
+        if (sendto(sfd, argv[i], msgLen, 0, (struct sockaddr *) &svaddr,
                    sizeof(struct sockaddr_un)) != msgLen) {
             printf("Error in sendto: partial/failed send\n");
             continue; // Attempt to send next message
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
             continue; // Attempt to receive next message
         }
 
-        printf("Response %d: %.*s\n", j, (int) numBytes, resp);
+        printf("Response %d: %.*s\n", i, (int) numBytes, resp);
     }
 
     remove(claddr.sun_path); // Remove client socket pathname

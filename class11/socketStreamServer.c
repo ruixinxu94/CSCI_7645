@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <ctype.h>
 
 // The number of pending connections that can be queued up by the socket.
 /**
@@ -22,7 +23,7 @@ Error Handling: To make the server robust and avoid crashes or undefined behavio
 int main(int argc, char *argv[]) {
     struct sockaddr_un addr;
     int sfd, cfd;
-    ssize_t numRead;
+    ssize_t numRead, numWritten;
     char buf[BUF_SIZE];
 
     sfd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -51,30 +52,35 @@ int main(int argc, char *argv[]) {
     }
 
     while (1) {
-        // Accepts a new connection, creating a new socket (cfd) for the connection.
         cfd = accept(sfd, NULL, NULL);
         if (cfd == -1) {
             printf("Error in accept\n");
-            continue; // Continue accepting new connections
+            continue;
         }
 
         while ((numRead = read(cfd, buf, BUF_SIZE)) > 0) {
-            buf[numRead] = '\0';
-            printf("this is the buf: %s\n", buf);
-//            if (write(STDOUT_FILENO, buf, numRead) != numRead) {
-//                printf("Error in write: partial/failed write\n");
-//                break;
-//            }
+            // Convert to uppercase
+            for (int i = 0; i < numRead; i++) {
+                buf[i] = toupper((char) buf[i]);
+            }
+
+            // Send back to client
+            numWritten = write(cfd, buf, numRead);
+            if (numWritten != numRead) {
+                printf("Error in write/n");
+                break;
+            }
         }
 
         if (numRead == -1) {
-            printf("Error in read\n");
+            printf("Error in read");
+            exit(EXIT_FAILURE);
         }
 
         if (close(cfd) == -1) {
-            printf("Error in close:\n");
+            printf("Error in close");
+            exit(EXIT_FAILURE);
         }
     }
-
     exit(EXIT_SUCCESS);
 }

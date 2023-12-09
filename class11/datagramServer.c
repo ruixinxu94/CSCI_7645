@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[]) {
     struct sockaddr_un svaddr, claddr;
-    int sfd, j;
+    int sfd, i;
     ssize_t numBytes;
     socklen_t len;
     char buf[BUF_SIZE];
@@ -49,8 +49,8 @@ int main(int argc, char *argv[]) {
 
         printf("Server received %ld bytes from %s\n", (long) numBytes, claddr.sun_path);
 
-        for (j = 0; j < numBytes; j++)
-            buf[j] = toupper((unsigned char) buf[j]);
+        for (i = 0; i < numBytes; i++)
+            buf[i] = toupper((unsigned char) buf[i]);
 
         if (sendto(sfd, buf, numBytes, 0, (struct sockaddr *) &claddr, len) != numBytes) {
             printf("Error in sendto: partial/failed send\n");

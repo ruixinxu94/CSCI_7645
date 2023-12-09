@@ -11,7 +11,7 @@
 int main(int argc, char *argv[]) {
     struct sockaddr_un addr;
     int sfd;
-    ssize_t numWritten;
+    ssize_t numWritten, numRead;
     char buf[BUF_SIZE];
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <string>\n", argv[0]);
@@ -36,17 +36,28 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Write the string passed as an argument to the socket
-    numWritten = write(sfd, argv[1], strlen(argv[1]));
-    if (numWritten == -1) {
-        perror("Error in write\n");
-        exit(EXIT_FAILURE);
-    }
+    // Iterate over each command-line argument and send it
+    for (int i = 1; i < argc; ++i) {
+        numWritten = write(sfd, argv[i], strlen(argv[i]));
+        if (numWritten == -1) {
+            perror("Error in write");
+            exit(EXIT_FAILURE);
+        }
+        if (numWritten < strlen(argv[i])) {
+            printf("Partial write\n");
+            exit(EXIT_FAILURE);
+        }
 
-    if (numWritten < strlen(argv[1])) {
-        printf("partial write\n");
-        exit(EXIT_FAILURE);
+        // Read response from server
+        numRead = read(sfd, buf, BUF_SIZE - 1);
+        if (numRead == -1) {
+            perror("Error in read");
+            exit(EXIT_FAILURE);
+        }
+        buf[numRead] = '\0'; // Null-terminate the received string
+        printf("Response from server: %s\n", buf);
     }
-    // Closes our socket
+    // Close socket
+    close(sfd);
     exit(EXIT_SUCCESS);
 }

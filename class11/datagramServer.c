@@ -19,13 +19,13 @@ int main(int argc, char *argv[]) {
     // Create server socket
     sfd = socket(AF_UNIX, SOCK_DGRAM, 0);
     if (sfd == -1) {
-        printf("Error in socket creation: %s\n", strerror(errno));
+        printf("Error in socket creation\n");
         exit(EXIT_FAILURE);
     }
 
     // Construct well-known address and bind server socket to it
     if (remove(SV_SOCK_PATH) == -1 && errno != ENOENT) {
-        printf("Error removing socket path: %s\n", strerror(errno));
+        printf("Error removing socket path\n");
         exit(EXIT_FAILURE);
     }
 
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         len = sizeof(struct sockaddr_un);
         numBytes = recvfrom(sfd, buf, BUF_SIZE, 0, (struct sockaddr *) &claddr, &len);
         if (numBytes == -1) {
-            printf("Error in recvfrom: %s\n", strerror(errno));
+            printf("Error in recvfrom\n");
             continue; // Continue processing next message
         }
 

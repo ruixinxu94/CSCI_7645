@@ -45,7 +45,8 @@ int main(int argc, char *argv[]) {
     // Send messages to server; echo responses on stdout
     for (j = 1; j < argc; j++) {
         msgLen = strlen(argv[j]); // May be longer than BUF_SIZE
-        if (sendto(sfd, argv[j], msgLen, 0, (struct sockaddr *) &svaddr, sizeof(struct sockaddr_un)) != msgLen) {
+        if (sendto(sfd, argv[j], msgLen, 0, (struct sockaddr *) &svaddr,
+                   sizeof(struct sockaddr_un)) != msgLen) {
             printf("Error in sendto: partial/failed send\n");
             continue; // Attempt to send next message
         }

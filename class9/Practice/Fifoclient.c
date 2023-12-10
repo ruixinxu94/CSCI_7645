@@ -15,11 +15,11 @@
 
 typedef struct {
     pid_t clientID;
-    float nums[10];
+    double nums[10];
 } Request;
 
 typedef struct {
-    float result;
+    double result;
 } Response;
 
 /* FIFO names */
@@ -44,22 +44,11 @@ void removeResponseFifo() {
 }
 
 int main(int argc, char *argv[]) {
-    int numTickets, status, requestFifoDescriptor, responseFifoDescriptor;
+    int status, requestFifoDescriptor, responseFifoDescriptor;
     Request request;
     Response response;
     int numRead, numWritten;
     char responseFifoName[MAX_LENGTH];
-
-    if (argc != 2 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
-        printf("Usage: %s <number of tickets>\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
-    numTickets = atoi(argv[1]);
-    if (numTickets <= 0) {
-        printf("Number of tickets must be positive.\n");
-        exit(EXIT_FAILURE);
-    }
 
     /* Register the exit handler */
     status = atexit(removeResponseFifo);
@@ -83,7 +72,7 @@ int main(int argc, char *argv[]) {
     /* Prepare the request */
     request.clientID = getpid();
 
-    float array[10];
+    double array[10];
 
     // Seed the random number generator
     srand(time(NULL) ^ getpid());
@@ -95,7 +84,7 @@ int main(int argc, char *argv[]) {
     // Print the array & assign the number
     printf("Random Array: \n");
     for (int i = 0; i < 10; i++) {
-        // assign float number to reuqest
+        // assign double number to reuqest
         request.nums[i] = array[i];
         printf("%.1f ", array[i]);
     }

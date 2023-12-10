@@ -38,21 +38,24 @@ int main() {
     resp_attr.mq_maxmsg = 10;
     resp_attr.mq_msgsize = sizeof(Response);
     resp_attr.mq_curmsgs = 0;
-    mqResponseDescriptor = mq_open(client_mq_name, O_CREAT | O_RDONLY, 0644, &resp_attr);
-    if (mqResponseDescriptor == (mqd_t)-1) {
+    mqResponseDescriptor = mq_open(client_mq_name,
+                                   O_CREAT | O_RDONLY,
+                                   S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH,
+                                   &resp_attr);
+    if (mqResponseDescriptor == (mqd_t) -1) {
         printf("Error: Client: mq_open (response)\n");
         exit(EXIT_FAILURE);
     }
 
     mqRequestDescriptor = mq_open(REQUEST_MQ_NAME, O_WRONLY);
-    if (mqRequestDescriptor == (mqd_t)-1) {
+    if (mqRequestDescriptor == (mqd_t) -1) {
         printf("Error: Client: mq_open (request)\n");
         mq_close(mqResponseDescriptor);
         mq_unlink(client_mq_name);
         exit(EXIT_FAILURE);
     }
 
-    status = mq_send(mqRequestDescriptor, (char *)&request, sizeof(Request), 0);
+    status = mq_send(mqRequestDescriptor, (char *) &request, sizeof(Request), 0);
     if (status == -1) {
         printf("Error: Client: mq_send\n");
         mq_close(mqRequestDescriptor);
@@ -61,7 +64,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    status = mq_receive(mqResponseDescriptor, (char *)&response, sizeof(Response), NULL);
+    status = mq_receive(mqResponseDescriptor, (char *) &response, sizeof(Response), NULL);
     if (status == -1) {
         printf("Error: Client: mq_receive\n");
         mq_close(mqRequestDescriptor);

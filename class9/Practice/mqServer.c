@@ -31,8 +31,10 @@ int main() {
     req_attr.mq_msgsize = sizeof(Request);
     req_attr.mq_curmsgs = 0;
 
-    mqRequestDescriptor = mq_open(REQUEST_MQ_NAME, O_CREAT | O_RDONLY,
-                                  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, &req_attr);
+    mqRequestDescriptor = mq_open(REQUEST_MQ_NAME,
+                                  O_CREAT | O_RDONLY,
+                                  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH,
+                                  &req_attr);
     if (mqRequestDescriptor == (mqd_t) -1) {
         perror("Error: Server: mq_open (request)");
         exit(EXIT_FAILURE);

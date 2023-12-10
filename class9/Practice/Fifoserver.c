@@ -15,11 +15,11 @@
 
 typedef struct {
     pid_t clientID;
-    float nums[10];
+    double nums[10];
 } Request;
 
 typedef struct {
-    float result;
+    double result;
 } Response;
 
 /* FIFO names */
@@ -48,21 +48,13 @@ void handleInterruptSignal() {
 volatile unsigned nextTicket = 1;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void *giveOutTickets(void *requestPointer) {
+void *executeAndSend(void *requestPointer) {
     int status, responseFifoDescriptor, numWritten;
     Response response;
     char responseFifoName[MAX_LENGTH];
 
 
     Request request = *(Request *) requestPointer;
-
-//    // print out array
-//    int length = sizeof(request.nums) / sizeof(request.nums[0]);
-//    printf("Array elements: ");
-//    for(int i = 0; i < length; i++) {
-//        printf("%f ", request.nums[i]);
-//    }
-//    printf("\n");
 
     // lock the thread
     status = pthread_mutex_lock(&mutex);
@@ -71,7 +63,7 @@ void *giveOutTickets(void *requestPointer) {
         exit(EXIT_FAILURE);
     }
     /* Compute the response */
-    float result = 0;
+    double result = 0;
     int length = sizeof(request.nums) / sizeof(request.nums[0]);
     for (int i = 0; i < length; i++) {
         result += request.nums[i];
@@ -193,7 +185,7 @@ int main(int argc, char *argv[]) {
         status = pthread_create(
                 &requestHandlerThread,
                 NULL,
-                giveOutTickets,
+                executeAndSend,
                 (void *) requestHandlerInput
         );
         if (status != 0) {

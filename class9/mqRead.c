@@ -18,9 +18,10 @@ int main(int argc, char *argv[]) {
     struct mq_attr attributes;
     unsigned priority;
     Person person;
+    char *messageQueueName = "/MyFirstMessageQueue";
 
     messageQueueDescriptor = mq_open(
-            "/MyFirstMessageQueue",
+            messageQueueName,
             O_RDONLY
     );
 

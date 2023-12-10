@@ -3,6 +3,7 @@
 #include <mqueue.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct {
     pid_t clientID;
@@ -13,65 +14,66 @@ typedef struct {
     float result;
 } Response;
 
-#define REQUEST_MQ "/request_mq"
+#define REQUEST_MQ_NAME "/request_mq"
 #define CLIENT_MQ_TEMPLATE "/response_mq_%d"
-#define MAX_LENGTH 100
+#define TEMPLATE_NAME_MAX_LENGTH 100
 
 int main() {
-    mqd_t request_mqd, response_mqd;
+    mqd_t mqRequestDescriptor, mqResponseDescriptor;
     Request request;
     Response response;
-    char client_mq_name[MAX_LENGTH];
+    char client_mq_name[TEMPLATE_NAME_MAX_LENGTH];
+    struct mq_attr resp_attr;
     int status;
 
-    // Set up client request
+    srand(time(NULL) ^ getpid());  // Seed the random number generator
+
     request.clientID = getpid();
     for (int i = 0; i < 10; i++) {
-        request.nums[i] = (float)i;  // Example data
+        request.nums[i] = rand() % 2;  // Generate either 0 or 1
     }
 
-    // Create client's response queue
-    snprintf(client_mq_name, MAX_LENGTH, CLIENT_MQ_TEMPLATE, getpid());
-    response_mqd = mq_open(client_mq_name, O_CREAT | O_RDONLY, 0644, NULL);
-    if (response_mqd == (mqd_t)-1) {
-        perror("Client: mq_open (response)");
+    snprintf(client_mq_name, TEMPLATE_NAME_MAX_LENGTH, CLIENT_MQ_TEMPLATE, getpid());
+    resp_attr.mq_flags = 0;
+    resp_attr.mq_maxmsg = 10;
+    resp_attr.mq_msgsize = sizeof(Response);
+    resp_attr.mq_curmsgs = 0;
+    mqResponseDescriptor = mq_open(client_mq_name, O_CREAT | O_RDONLY, 0644, &resp_attr);
+    if (mqResponseDescriptor == (mqd_t)-1) {
+        printf("Error: Client: mq_open (response)\n");
         exit(EXIT_FAILURE);
     }
 
-    // Open server's request queue
-    request_mqd = mq_open(REQUEST_MQ, O_WRONLY);
-    if (request_mqd == (mqd_t)-1) {
-        perror("Client: mq_open (request)");
-        mq_close(response_mqd);
+    mqRequestDescriptor = mq_open(REQUEST_MQ_NAME, O_WRONLY);
+    if (mqRequestDescriptor == (mqd_t)-1) {
+        printf("Error: Client: mq_open (request)\n");
+        mq_close(mqResponseDescriptor);
         mq_unlink(client_mq_name);
         exit(EXIT_FAILURE);
     }
 
-    // Send request to server
-    status = mq_send(request_mqd, (char*)&request, sizeof(Request), 0);
+    status = mq_send(mqRequestDescriptor, (char *)&request, sizeof(Request), 0);
     if (status == -1) {
-        perror("Client: mq_send");
-        mq_close(request_mqd);
-        mq_close(response_mqd);
+        printf("Error: Client: mq_send\n");
+        mq_close(mqRequestDescriptor);
+        mq_close(mqResponseDescriptor);
         mq_unlink(client_mq_name);
         exit(EXIT_FAILURE);
     }
 
-    // Read response from server
-    status = mq_receive(response_mqd, (char*)&response, sizeof(Response), NULL);
+    status = mq_receive(mqResponseDescriptor, (char *)&response, sizeof(Response), NULL);
     if (status == -1) {
-        perror("Client: mq_receive");
-        mq_close(request_mqd);
-        mq_close(response_mqd);
+        printf("Error: Client: mq_receive\n");
+        mq_close(mqRequestDescriptor);
+        mq_close(mqResponseDescriptor);
         mq_unlink(client_mq_name);
         exit(EXIT_FAILURE);
     }
 
     printf("Received response: %f\n", response.result);
 
-    // Cleanup
-    mq_close(request_mqd);
-    mq_close(response_mqd);
+    mq_close(mqRequestDescriptor);
+    mq_close(mqResponseDescriptor);
     mq_unlink(client_mq_name);
 
     return 0;

@@ -35,10 +35,10 @@ void showAllContents(char *pathname, int depth) {
 
         // Check if it is a directory or a file
         if (S_ISDIR(statbuf.st_mode)) {
-            printf("%s", entry->d_name);  // Print directory name
+            printf("%s\n", entry->d_name);  // Print directory name
             showAllContents(path, depth + 1); // Recurse into the directory
         } else {
-            printf("  %s", entry->d_name);  // Print file name with additional indentation
+            printf("%s\n", entry->d_name);  // Print file name with additional indentation
         }
     }
 

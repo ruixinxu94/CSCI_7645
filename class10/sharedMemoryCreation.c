@@ -20,9 +20,11 @@ int main(int argc, char *argv[]) {
     void *addr;
     int *pointerToSharedVariable;
     sem_t *mySemaphore;
+    char* sharedMemoryName = "/MySharedMemory2";
+    char* semaphoreName = "/MySemaphore2";
 
     /* Create the semaphore if it doesn't already exist, it has only 1 size semaphore*/
-    mySemaphore = sem_open("/MySemaphore", O_CREAT, S_IRUSR | S_IWUSR, 1);
+    mySemaphore = sem_open(semaphoreName, O_CREAT, S_IRUSR | S_IWUSR, 1);
     if (mySemaphore == SEM_FAILED) {
         printf("Failed to create semaphore.\n");
         exit(EXIT_FAILURE);
@@ -30,7 +32,7 @@ int main(int argc, char *argv[]) {
 
     /* Open the shared variable (create if it doesn't exist)*/
     shmDescriptor = shm_open(
-            "/MySharedMemory", O_CREAT | O_RDWR, // cannot have O_WRONLY here
+            sharedMemoryName, O_CREAT | O_RDWR, // cannot have O_WRONLY here
             S_IRUSR | S_IWUSR); // cannot have S_IXUSR
     if (shmDescriptor == -1) {
         printf("Failed to create shared memory.\n");

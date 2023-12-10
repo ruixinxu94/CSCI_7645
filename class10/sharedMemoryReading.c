@@ -19,16 +19,18 @@ int main(int argc, char *argv[]) {
     int valueOfSharedVariable;
     struct stat shmMetadata;
     sem_t *mySemaphore;
+    char* sharedMemoryName = "/MySharedMemory2";
+    char* semaphoreName = "/MySemaphore2";
 
     /* Open the existing semaphore */
-    mySemaphore = sem_open("/MySemaphore", 0);
+    mySemaphore = sem_open(semaphoreName, 0);
     if (mySemaphore == SEM_FAILED) {
-        printf("Failed to create semaphore.\n");
+        printf("Failed to open semaphore.\n");
         exit(EXIT_FAILURE);
     }
 
     /* Open the shared variable for reading */
-    shmDescriptor = shm_open("/MySharedMemory", O_RDONLY, 0);
+    shmDescriptor = shm_open(sharedMemoryName,  O_RDONLY, 0);
     if (shmDescriptor == -1) {
         printf("Failed to open shared memory.\n");
         exit(EXIT_FAILURE);
@@ -61,12 +63,18 @@ int main(int argc, char *argv[]) {
     status = sem_wait(mySemaphore);
     if (status != 0) {
         printf("Failed to lock semaphore.\n");
+        /* Cleanup before exiting */
+        munmap(addr, shmMetadata.st_size);
+        sem_close(mySemaphore);
         exit(EXIT_FAILURE);
     }
     valueOfSharedVariable = *pointerToSharedVariable; // CRITICAL SECTION
     status = sem_post(mySemaphore);
     if (status != 0) {
         printf("Failed to unlock semaphore.\n");
+        /* Cleanup before exiting */
+        munmap(addr, shmMetadata.st_size);
+        sem_close(mySemaphore);
         exit(EXIT_FAILURE);
     }
 
@@ -76,7 +84,8 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("The value of the shared memory = %d\n", valueOfSharedVariable);
+    munmap(addr, shmMetadata.st_size);
 
+    printf("The value of the shared memory = %d\n", valueOfSharedVariable);
     exit(EXIT_SUCCESS);
 }

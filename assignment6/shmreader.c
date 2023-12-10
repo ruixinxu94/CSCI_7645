@@ -13,31 +13,32 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    const char *shm_name = argv[1];
-    const char *sem_name = argv[2];
+    const char *sharedMemoryName = argv[1];
+    const char *semaphoreName = argv[2];
 
-    sem_t *sem = sem_open(sem_name, 0);
+    sem_t *sem = sem_open(semaphoreName, 0);
     if (sem == SEM_FAILED) {
         printf("Error opening semaphore\n");
         exit(EXIT_FAILURE);
     }
 
-    int shmDescriptor = shm_open(shm_name, O_RDONLY, 0);
+    int shmDescriptor = shm_open(sharedMemoryName, O_RDONLY, 0);
     if (shmDescriptor == -1) {
         printf("Error opening shared memory\n");
         sem_close(sem);
         exit(EXIT_FAILURE);
     }
 
-    struct stat sb;
-    if (fstat(shmDescriptor, &sb) == -1) {
+    struct stat shmMetadata;
+    if (fstat(shmDescriptor, &shmMetadata) == -1) {
         printf("Error getting shared memory size\n");
         sem_close(sem);
         close(shmDescriptor);
         exit(EXIT_FAILURE);
     }
 
-    int *shared_memory = mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, shmDescriptor, 0);
+    int *shared_memory = mmap(NULL, shmMetadata.st_size,
+                              PROT_READ, MAP_SHARED, shmDescriptor, 0);
     if (shared_memory == MAP_FAILED) {
         printf("Error mapping shared memory\n");
         sem_close(sem);
@@ -52,7 +53,7 @@ int main(int argc, char *argv[]) {
     }
     sem_post(sem);
 
-    munmap(shared_memory, sb.st_size);
+    munmap(shared_memory, shmMetadata.st_size);
     close(shmDescriptor);
     sem_close(sem);
 

@@ -31,13 +31,7 @@ int main(int argc, char **argv) {
         printf("-usage...");
         exit(EXIT_FAILURE);
     }
-    /**Open the source file for reading
-     *
-     * man open
-     * man 2 open
-     * to check the open manual
-     * / to search in manual
-     */
+    /**Open the source file for reading */
     sourceFd = open(argv[1], O_RDONLY);
     if (sourceFd == -1) {
         printf("%s :no such file, the reading failed\n", argv[1]);

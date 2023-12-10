@@ -11,40 +11,40 @@ void showAllContents(char *pathname, int depth) {
 
     dir = opendir(pathname);
     if (dir == NULL) {
-        perror("opendir");
+        printf("Failed to open directory: %s", pathname);
         exit(EXIT_FAILURE);
     }
 
-    entry = readdir(dir);  // Read the first directory entry
-    while (entry != NULL) {
-        // Skip the entries "." and ".."
+    while ((entry = readdir(dir)) != NULL) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            entry = readdir(dir);  // Read the next directory entry
             continue;
         }
 
         char path[1024];
-        // Construct the full path using strcpy and strcat
-        strcpy(path, pathname);
-        strcat(path, "/");
-        strcat(path, entry->d_name);
+        snprintf(path, sizeof(path), "%s/%s", pathname, entry->d_name);
 
-        // Print the entry with the depth indentation
+        if (stat(path, &statbuf) == -1) {
+            printf("Failed to get file status for: %s", path);
+            continue;
+        }
+
+        // Indent based on depth
         for (int i = 0; i < depth; ++i) {
             printf("  ");
         }
 
-        printf("%s\n", entry->d_name);  // Print the entry name
-
+        // Check if it is a directory or a file
         if (S_ISDIR(statbuf.st_mode)) {
-            showAllContents(path, depth + 1);  // Recurse into the directory
+            printf("%s", entry->d_name);  // Print directory name
+            showAllContents(path, depth + 1); // Recurse into the directory
+        } else {
+            printf("  %s", entry->d_name);  // Print file name with additional indentation
         }
-
-        entry = readdir(dir);  // Read the next directory entry
     }
 
     closedir(dir);
 }
+
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {

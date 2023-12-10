@@ -25,19 +25,19 @@ int main(int argc, char **argv) {
     char *message = argv[1];
 
     if (pipe(responsePipe) == -1) {
-        perror("Failed to create response pipe");
+        printf("Failed to create response pipe");
         exit(EXIT_FAILURE);
     }
 
     if (pipe(requestPipe) == -1) {
-        perror("Failed to create request pipe");
+        printf("Failed to create request pipe");
         exit(EXIT_FAILURE);
     }
 
     int childId = fork();
     switch (childId) {
         case -1: {
-            perror("Failed to create child process");
+            printf("Failed to create child process");
             exit(EXIT_FAILURE);
         }
         case 0: {  // Child Process
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
             }
 
             if (numRead == -1) {
-                perror("Parent failed to read from response pipe");
+                printf("Parent failed to read from response pipe");
                 exit(EXIT_FAILURE);
             }
 
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
             closePipes(requestPipe[1], responsePipe[0]);
 
             if (wait(&childStatus) == -1) {
-                perror("Failed to wait for child to exit");
+                printf("Failed to wait for child to exit");
                 exit(EXIT_FAILURE);
             }
             exit(EXIT_SUCCESS);

@@ -6,7 +6,7 @@
 void* threadFunction(void* input) {
     int index, value;
     value = *(int*) input;
-    for (index = 0; index < 1000000; index++) {
+    for (index = 0; index < 10000; index++) {
         printf("Thread %d\n", value);
     }
     return NULL;

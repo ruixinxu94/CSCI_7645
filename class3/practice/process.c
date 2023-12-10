@@ -51,16 +51,5 @@ int main() {
             }
         }
     }
-
-//    for (int i = 0; i < 3; ++i) {
-////        wait(&status);
-//        waitpid(child_pids[i], &status, 0);
-////        if (WIFEXITED(status)) {
-////            printf("Child process exited with status: %d\n", WEXITSTATUS(status));
-////        } else {
-////            printf("Child process did not exit normally\n");
-////        }
-//        printf("Child process exited with status: %d\n", WEXITSTATUS(status));
-//    }
     exit(EXIT_SUCCESS);
 }
